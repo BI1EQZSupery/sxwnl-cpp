@@ -45,3 +45,5 @@ test5
 
 # cmake build path
 build
+cmake-build-debug
+.idea
