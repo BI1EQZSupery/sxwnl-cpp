@@ -58,19 +58,19 @@ static int _getch() {return getch();}
 static int _kbhit() {return kbhit();}
 
 #elif defined (__WIN32__) || defined (__GNUC__) || defined (_MSC_VER) // __unix__
-#include <windows.h>
+//#include <windows.h>
 #include <conio.h>
 #include <stdio.h>
 
-static void clrscr() {system("cls");}
+static void clrscr() {/* system("cls"); */}
 
 static void _clrscr() {clrscr();}
 
 static void gotoxy(int x, int y) {
-  COORD c;
-  c.X = x;
-  c.Y = y;
-  SetConsoleCursorPosition (GetStdHandle(STD_OUTPUT_HANDLE), c);
+//  COORD c;
+//  c.X = x;
+//  c.Y = y;
+//  SetConsoleCursorPosition (GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 static void _gotoxy(int x,int y) {gotoxy(x,y);}
 #endif // __WIN32__
