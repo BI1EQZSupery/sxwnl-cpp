@@ -17,19 +17,23 @@
 
 
 mystl::string rysCalc(Date d, bool is_utc, bool nasa_r, JINGWEI jw);
-mystl::string rs_search(int Y,int M,int n,bool fs);
+
+mystl::string rs_search(int Y, int M, int n, bool fs);
 
 // 不同周期下的日食概略推算
 // fs 功能选择（function select）1
 // jd0 初始儒略日
 // step 步长
-mystl::string rs2_calc(uint8_t fs,double jd0, double step = SYZYGY);
+mystl::string rs2_calc(uint8_t fs, double jd0, double step = SYZYGY);
 
 // 打印界线图
 mystl::string rs2_jxb();
 
 // 升降相关计算
 mystl::string shengjiang(int y, int m, int d, JINGWEI jw);
+
 mystl::string shengjiang2(int y, JINGWEI jw);
+
 mystl::string shengjiang3(int y);
+
 #endif

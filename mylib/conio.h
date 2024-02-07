@@ -48,7 +48,7 @@ static int kbhit(void)
 static void gotoxy(int x, int y) { printf("\033[%d;%df", y, x); }
 
 static void _gotoxy(int x,int y) {gotoxy(x,y);}
-	 
+
 static void clrscr() { printf("\033[2J\033[0;0f"); }
 
 static void _clrscr() {clrscr();}
@@ -64,7 +64,7 @@ static int _kbhit() {return kbhit();}
 
 static void clrscr() {/* system("cls"); */}
 
-static void _clrscr() {clrscr();}
+static void _clrscr() { clrscr(); }
 
 static void gotoxy(int x, int y) {
 //  COORD c;
@@ -72,7 +72,9 @@ static void gotoxy(int x, int y) {
 //  c.Y = y;
 //  SetConsoleCursorPosition (GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
-static void _gotoxy(int x,int y) {gotoxy(x,y);}
+
+static void _gotoxy(int x, int y) { gotoxy(x, y); }
+
 #endif // __WIN32__
 
 #endif // CONIO_H

@@ -5,11 +5,10 @@
 
 #include <cassert>
 
-namespace mystl
-{
+namespace mystl {
 
 #define MYSTL_DEBUG(expr) \
-  assert(expr)  
+  assert(expr)
 
 #define THROW_LENGTH_ERROR_IF(expr, what) \
   if ((expr)) throw std::length_error(what)

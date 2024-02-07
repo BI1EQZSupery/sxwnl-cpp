@@ -9,8 +9,7 @@
 #include "heap_algo.h"
 #include "numeric.h"
 
-namespace mystl
-{
+namespace mystl {
 
 } // namespace mystl
 

@@ -31,28 +31,37 @@ SOFTWARE.
 
 #include "../mystl/itoa.h"
 
-template <typename T> struct is_float {const static bool value = false;};
-template <> struct is_float<long double> {const static bool value = true;};
-template <> struct is_float<double> {const static bool value = true;};
-template <> struct is_float<float> {const static bool value = true;};
+template<typename T>
+struct is_float {
+    const static bool value = false;
+};
+template<>
+struct is_float<long double> {
+    const static bool value = true;
+};
+template<>
+struct is_float<double> {
+    const static bool value = true;
+};
+template<>
+struct is_float<float> {
+    const static bool value = true;
+};
 
-template <class T>
-void show(T n)
-{
+template<class T>
+void show(T n) {
     std::cout << "is_float<int> == " << std::boolalpha << is_float<T>::value << std::endl;
     char text[32] = {};
     jeaiii::to_text_from_integer(text, n);
     std::cout << text << "\n";
 }
 
-template <class T>
-void test(T n)
-{
+template<class T>
+void test(T n) {
     show(n);
 }
 
-int main()
-{
+int main() {
     test(-1.2);
     test(-1);
     test(99963555669888.9687);
