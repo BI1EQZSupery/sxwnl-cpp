@@ -145,7 +145,7 @@ void tianXiang(int xm, int xm2, Date dat,int n=10)
     std::cout<< s<<std::endl;
 }
 
-void pCalc(int xt,Date dat, int n=10, int dt=1, bool Cd_ut=1)
+void pCalc(int xt,Date dat, JINGWEI jw, int n=10, int dt=1, bool Cd_ut = true)
 { //行星星历计算
     double jd = toJD({dat.Y,dat.M,dat.D,dat.h,dat.m,dat.s}) - J2000;//取屏幕时间
     if (Cd_ut)
@@ -296,7 +296,7 @@ void dingSuo_v()
     std::cout<< "\033[31;1m高精度:" << std::chrono::duration<double> (d2 - d1).count()*1000 << "毫秒/10千个\n" << "低精度:" << std::chrono::duration<double> (d3 - d2).count()*1000 << "毫秒/10千个\n\033[0m";
 }
 
-void ML_calc(Date dat)
+void ML_calc(Date dat, JINGWEI jw)
 {
     MLBZ ob={};
     double jd = toJD({dat.Y,dat.M,dat.D,dat.h,dat.m,dat.s});
@@ -422,7 +422,7 @@ int main()
     }
     
     // 星历计算
-    pCalc(1, {2008,1,1}, 3);
+    pCalc(1, {2008,1,1}, lon_and_lat, 3);
     // 天象
     tianXiang(15,2,{2022,1,1});
     
@@ -441,15 +441,16 @@ int main()
     // dingSuo_cmp(2000,10);
     
     // 命理八字
-    ML_calc(dat);
+    ML_calc(dat, lon_and_lat);
     
     // 升降
     std::cout<<"\n========--升降计算--========\n";
-    std::cout<<shengjiang(dat.Y, dat.M, dat.D)<<"\n";
+    std::cout<<shengjiang(dat.Y, dat.M, dat.D, lon_and_lat)<<"\n";
     
     // 日月食
     Date d = {2008, 8, 1, 18, 17, 15.0};
-    std::cout<<rysCalc(d, true, false)<<"\n";
+
+    std::cout<<rysCalc(d, true, false, lon_and_lat)<<"\n";
     
     std::cout<<rs_search(2008,8,200,1)<<std::endl; // 日食粗搜索
     std::cout<<rs2_calc(5,0,29.5306)<<"\n";

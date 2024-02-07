@@ -6,7 +6,7 @@
 #include "lat_lon_data.h"
 #include "conio.h"
 
-JINGWEI jw={116+23/60.0, 39.9, "默认", "北京"};
+JINGWEI lon_and_lat = {116+23/60.0, 39.9, "默认", "北京"};
 /****************
  [地理经纬度数据库]
 

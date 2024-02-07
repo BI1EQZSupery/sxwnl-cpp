@@ -4,8 +4,8 @@
 #include "../mylib/math_patch.h"
 #include "../mylib/mystl/static_array.h"
 
-double SZJ::L = 0;
-double SZJ::fa = 0;
+double SZJ::lon = 0;
+double SZJ::lat = 0;
 double SZJ::dt = 0;
 double SZJ::E = 0.409092614;
 
@@ -23,7 +23,7 @@ static inline double mod2(double a,double b)
 
 double SZJ::getH(double h, double w)
 {								//h地平纬度,w赤纬,返回时角
-	double c = (sin(h) - sin(SZJ::fa) * sin(w)) / cos(SZJ::fa) / cos(w);
+	double c = (sin(h) - sin(SZJ::lat) * sin(w)) / cos(SZJ::lat) / cos(w);
 	if (fabs(c) > 1)
 		return M_PI;
 	return acos(c);
@@ -33,7 +33,7 @@ void SZJ::Mcoord(double jd, double H0, SJ &r)
 {								//章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
 	mystl::array3 z = m_coord((jd + SZJ::dt) / 36525, 40, 30, 8);	//低精度月亮赤经纬
 	z = llrConv(z, SZJ::E);	//转为赤道坐标
-	r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::L - z[0]);	//得到此刻天体时角
+	r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::lon - z[0]);	//得到此刻天体时角
 	if (H0)
 		r.H0 = SZJ::getH(0.7275 * cs_rEar / z[2] - 34 * 60 / rad, z[1]);	//升起对应的时角
 }
@@ -42,7 +42,7 @@ SJ SZJ::Mt(double jd)
 {								//月亮到中升降时刻计算,传入jd含义与St()函数相同
 	SZJ::dt = dt_T(jd);
 	SZJ::E = hcjj(jd / 36525);
-	jd -= mod2(0.1726222 + 0.966136808032357 * jd - 0.0366 * SZJ::dt + SZJ::L / pi2, 1);	//查找最靠近当日中午的月上中天,mod2的第1参数为本地时角近似值
+	jd -= mod2(0.1726222 + 0.966136808032357 * jd - 0.0366 * SZJ::dt + SZJ::lon / pi2, 1);	//查找最靠近当日中午的月上中天,mod2的第1参数为本地时角近似值
 
 	SJ r = {};
 	double sv = pi2 * 0.966;
@@ -67,7 +67,7 @@ void SZJ::Scoord(double jd, int xm, SJ &r)
 {								//章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
 	mystl::array3 z = {E_Lon((jd + SZJ::dt) / 36525, 5) + M_PI - 20.5 / rad, 0, 1};	//太阳坐标(修正了光行差)
 	z = llrConv(z, SZJ::E);	//转为赤道坐标
-	r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::L - z[0]);	//得到此刻天体时角
+	r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::lon - z[0]);	//得到此刻天体时角
 
 	if (xm == 10 || xm == 1)
 		r.H1 = SZJ::getH(-50 * 60 / rad, z[1]);	//地平以下50分
@@ -83,7 +83,7 @@ SJ SZJ::St(double jd)
 {								//太阳到中升降时刻计算,传入jd是当地中午12点时间对应的2000年首起算的格林尼治时间UT
 	SZJ::dt = dt_T(jd);
 	SZJ::E = hcjj(jd / 36525);
-	jd -= mod2(jd + SZJ::L / pi2, 1);	//查找最靠近当日中午的日上中天,mod2的第1参数为本地时角近似值
+	jd -= mod2(jd + SZJ::lon / pi2, 1);	//查找最靠近当日中午的日上中天,mod2的第1参数为本地时角近似值
 
 	SJ r = {};
 	double sv = pi2;
@@ -153,7 +153,7 @@ void SZJ::calcRTS(double jd, int n, double Jdl, double Wdl, double sq)
 		for (i = 0; i < 31; i++)
 			SZJ::rts.push_back({});
 	}
-	SZJ::L = Jdl, SZJ::fa = Wdl, sq /= 24;	//设置站点参数
+	SZJ::lon = Jdl, SZJ::lat = Wdl, sq /= 24;	//设置站点参数
 	for (i = 0; i < n; i++)
 	{
 		rr = SZJ::rts[i];

@@ -12,7 +12,7 @@
 #include "../mylib/mystl/static_array.h"
 #include "../mylib/mystl/map.h"
 
-mystl::string rysCalc(Date d, bool is_utc, bool nasa_r)
+mystl::string rysCalc(Date d, bool is_utc, bool nasa_r, JINGWEI jw)
 {
 	double vJ=jw.J/radd;
 	double vW=jw.W/radd;
@@ -232,13 +232,13 @@ mystl::string rs2_jxb()
  return RS_GS::jieX3(jd);
 }
 
-mystl::string shengjiang(int y, int m, int d)
+mystl::string shengjiang(int y, int m, int d, JINGWEI jw)
 {
 	Date dt = { y, m, d, 12, 0, 0 };
-	SZJ::L = jw.J / radd;		//设置站点参数
-	SZJ::fa = jw.W / radd;
+	SZJ::lon = jw.J / radd;		//设置站点参数
+	SZJ::lat = jw.W / radd;
 	double jd = toJD(dt) - J2000;	//取屏幕时间
-	double sq = SZJ::L / pi2 * 24.0;
+	double sq = SZJ::lon / pi2 * 24.0;
 
 	mystl::string s = "\033[31;1m北京时间(转为格林尼治时间请减8小时)：\033[0m\n";
 	SJ r;
@@ -260,7 +260,7 @@ mystl::string shengjiang(int y, int m, int d)
 	return s;
 }
 
-mystl::string shengjiang2(int y)
+mystl::string shengjiang2(int y, JINGWEI jw)
 {								//太阳升降快算
 	double L = jw.J / radd;		//设置站点参数
 	double fa = jw.W / radd;

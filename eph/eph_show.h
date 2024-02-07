@@ -3,6 +3,7 @@
 
 #include "../mylib/mystl/my_string.h"
 #include "../mylib/tool.h"
+#include "lat_lon_data.h"
 
 /*
 日食时间周期定义：
@@ -15,7 +16,7 @@
 #define SYZYGY      29.5306
 
 
-mystl::string rysCalc(Date d, bool is_utc, bool nasa_r);
+mystl::string rysCalc(Date d, bool is_utc, bool nasa_r, JINGWEI jw);
 mystl::string rs_search(int Y,int M,int n,bool fs);
 
 // 不同周期下的日食概略推算
@@ -28,7 +29,7 @@ mystl::string rs2_calc(uint8_t fs,double jd0, double step = SYZYGY);
 mystl::string rs2_jxb();
 
 // 升降相关计算
-mystl::string shengjiang(int y, int m, int d);
-mystl::string shengjiang2(int y);
+mystl::string shengjiang(int y, int m, int d, JINGWEI jw);
+mystl::string shengjiang2(int y, JINGWEI jw);
 mystl::string shengjiang3(int y);
 #endif

@@ -9,6 +9,6 @@ struct JINGWEI
 	char x[48];//区县
 };
 
-extern JINGWEI jw;
+extern JINGWEI lon_and_lat;
 JINGWEI GeographicalPosition(void);
 #endif
