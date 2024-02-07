@@ -4,8 +4,8 @@
 #include "../mylib/math_patch.h"
 #include "../mylib/mystl/static_array.h"
 
-double SZJ::lon = 0;
-double SZJ::lat = 0;
+//double SZJ::lon = 0;
+//double SZJ::lat = 0;
 double SZJ::dt = 0;
 double SZJ::E = 0.409092614;
 
@@ -20,71 +20,71 @@ static inline double mod2(double a, double b) { //临界余数(a与最近的整�
 
 }
 
-double SZJ::getH(double h, double w) {                                //h地平纬度,w赤纬,返回时角
-    double c = (sin(h) - sin(SZJ::lat) * sin(w)) / cos(SZJ::lat) / cos(w);
+double SZJ::getH(double h, double w, Location loc) {                                //h地平纬度,w赤纬,返回时角
+    double c = (sin(h) - sin(loc.latitude_R) * sin(w)) / cos( loc.latitude_R) / cos(w);
     if (fabs(c) > 1)
         return M_PI;
     return acos(c);
 };
 
-void SZJ::Mcoord(double jd, double H0, SJ &r) {                                //章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
+void SZJ::Mcoord(double jd, double H0, SJ &r, Location loc) {                                //章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
     mystl::array3 z = m_coord((jd + SZJ::dt) / 36525, 40, 30, 8);    //低精度月亮赤经纬
     z = llrConv(z, SZJ::E);    //转为赤道坐标
-    r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::lon - z[0]);    //得到此刻天体时角
+    r.H = rad2rrad(pGST(jd, SZJ::dt) + loc.longitude_R - z[0]);    //得到此刻天体时角
     if (H0)
-        r.H0 = SZJ::getH(0.7275 * cs_rEar / z[2] - 34 * 60 / rad, z[1]);    //升起对应的时角
+        r.H0 = SZJ::getH(0.7275 * cs_rEar / z[2] - 34 * 60 / rad, z[1], loc);    //升起对应的时角
 }
 
-SJ SZJ::Mt(double jd) {                                //月亮到中升降时刻计算,传入jd含义与St()函数相同
+SJ SZJ::Mt(double jd, Location loc) {                                //月亮到中升降时刻计算,传入jd含义与St()函数相同
     SZJ::dt = dt_T(jd);
     SZJ::E = hcjj(jd / 36525);
-    jd -= mod2(0.1726222 + 0.966136808032357 * jd - 0.0366 * SZJ::dt + SZJ::lon / pi2,
+    jd -= mod2(0.1726222 + 0.966136808032357 * jd - 0.0366 * SZJ::dt + loc.longitude_R / pi2,
                1);    //查找最靠近当日中午的月上中天,mod2的第1参数为本地时角近似值
 
     SJ r = {};
     double sv = pi2 * 0.966;
     r.z = r.x = r.s = r.j = r.c = r.h = jd;
-    SZJ::Mcoord(jd, 1, r);        //月亮坐标
+    SZJ::Mcoord(jd, 1, r, loc);        //月亮坐标
     r.s += (-r.H0 - r.H) / sv;
     r.j += (r.H0 - r.H) / sv;
     r.z += (0 - r.H) / sv;
     r.x += (M_PI - r.H) / sv;
-    SZJ::Mcoord(r.s, 1, r);
+    SZJ::Mcoord(r.s, 1, r, loc);
     r.s += rad2rrad(-r.H0 - r.H) / sv;
-    SZJ::Mcoord(r.j, 1, r);
+    SZJ::Mcoord(r.j, 1, r, loc);
     r.j += rad2rrad(+r.H0 - r.H) / sv;
-    SZJ::Mcoord(r.z, 0, r);
+    SZJ::Mcoord(r.z, 0, r, loc);
     r.z += rad2rrad(0 - r.H) / sv;
-    SZJ::Mcoord(r.x, 0, r);
+    SZJ::Mcoord(r.x, 0, r, loc);
     r.x += rad2rrad(M_PI - r.H) / sv;
     return r;
 }
 
-void SZJ::Scoord(double jd, int xm, SJ &r) {                                //章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
+void SZJ::Scoord(double jd, int xm, SJ &r, Location loc) {                                //章动同时影响恒星时和天体坐标,所以不计算章动。返回时角及赤经纬
     mystl::array3 z = {E_Lon((jd + SZJ::dt) / 36525, 5) + M_PI - 20.5 / rad, 0, 1};    //太阳坐标(修正了光行差)
     z = llrConv(z, SZJ::E);    //转为赤道坐标
-    r.H = rad2rrad(pGST(jd, SZJ::dt) + SZJ::lon - z[0]);    //得到此刻天体时角
+    r.H = rad2rrad(pGST(jd, SZJ::dt) + loc.longitude_R - z[0]);    //得到此刻天体时角
 
     if (xm == 10 || xm == 1)
-        r.H1 = SZJ::getH(-50 * 60 / rad, z[1]);    //地平以下50分
+        r.H1 = SZJ::getH(-50 * 60 / rad, z[1], loc);    //地平以下50分
     if (xm == 10 || xm == 2)
-        r.H2 = SZJ::getH(-6 * 3600 / rad, z[1]);    //地平以下6度
+        r.H2 = SZJ::getH(-6 * 3600 / rad, z[1], loc);    //地平以下6度
     if (xm == 10 || xm == 3)
-        r.H3 = SZJ::getH(-12 * 3600 / rad, z[1]);    //地平以下12度
+        r.H3 = SZJ::getH(-12 * 3600 / rad, z[1], loc);    //地平以下12度
     if (xm == 10 || xm == 4)
-        r.H4 = SZJ::getH(-18 * 3600 / rad, z[1]);    //地平以下18度
+        r.H4 = SZJ::getH(-18 * 3600 / rad, z[1], loc);    //地平以下18度
 }
 
-SJ SZJ::St(double jd) {                                //太阳到中升降时刻计算,传入jd是当地中午12点时间对应的2000年首起算的格林尼治时间UT
+SJ SZJ::St(double jd, Location loc) {                                //太阳到中升降时刻计算,传入jd是当地中午12点时间对应的2000年首起算的格林尼治时间UT
     SZJ::dt = dt_T(jd);
     SZJ::E = hcjj(jd / 36525);
-    jd -= mod2(jd + SZJ::lon / pi2, 1);    //查找最靠近当日中午的日上中天,mod2的第1参数为本地时角近似值
+    jd -= mod2(jd + loc.longitude_R / pi2, 1);    //查找最靠近当日中午的日上中天,mod2的第1参数为本地时角近似值
 
     SJ r = {};
     double sv = pi2;
     r.z = r.x = r.s = r.j = r.c = r.h = r.c2 = r.h2 = r.c3 = r.h3 = jd;
     r.sm = "";
-    SZJ::Scoord(jd, 10, r);    //太阳坐标
+    SZJ::Scoord(jd, 10, r, loc);    //太阳坐标
     r.s += (-r.H1 - r.H) / sv;    //升起
     r.j += (r.H1 - r.H) / sv;    //降落
 
@@ -97,63 +97,63 @@ SJ SZJ::St(double jd) {                                //太阳到中升降时�
 
     r.z += (0 - r.H) / sv;        //中天
     r.x += (M_PI - r.H) / sv;    //下中天
-    SZJ::Scoord(r.s, 1, r);
+    SZJ::Scoord(r.s, 1, r, loc);
     r.s += rad2rrad(-r.H1 - r.H) / sv;
     if (r.H1 == M_PI)
         r.sm += "无升起.";
-    SZJ::Scoord(r.j, 1, r);
+    SZJ::Scoord(r.j, 1, r, loc);
     r.j += rad2rrad(+r.H1 - r.H) / sv;
     if (r.H1 == M_PI)
         r.sm += "无降落.";
 
-    SZJ::Scoord(r.c, 2, r);
+    SZJ::Scoord(r.c, 2, r, loc);
     r.c += rad2rrad(-r.H2 - r.H) / sv;
     if (r.H2 == M_PI)
         r.sm += "无民用晨.";
-    SZJ::Scoord(r.h, 2, r);
+    SZJ::Scoord(r.h, 2, r, loc);
     r.h += rad2rrad(+r.H2 - r.H) / sv;
     if (r.H2 == M_PI)
         r.sm += "无民用昏.";
-    SZJ::Scoord(r.c2, 3, r);
+    SZJ::Scoord(r.c2, 3, r, loc);
     r.c2 += rad2rrad(-r.H3 - r.H) / sv;
     if (r.H3 == M_PI)
         r.sm += "无航海晨.";
-    SZJ::Scoord(r.h2, 3, r);
+    SZJ::Scoord(r.h2, 3, r, loc);
     r.h2 += rad2rrad(+r.H3 - r.H) / sv;
     if (r.H3 == M_PI)
         r.sm += "无航海昏.";
-    SZJ::Scoord(r.c3, 4, r);
+    SZJ::Scoord(r.c3, 4, r, loc);
     r.c3 += rad2rrad(-r.H4 - r.H) / sv;
     if (r.H4 == M_PI)
         r.sm += "无天文晨.";
-    SZJ::Scoord(r.h3, 4, r);
+    SZJ::Scoord(r.h3, 4, r, loc);
     r.h3 += rad2rrad(+r.H4 - r.H) / sv;
     if (r.H4 == M_PI)
         r.sm += "无天文昏.";
 
-    SZJ::Scoord(r.z, 0, r);
+    SZJ::Scoord(r.z, 0, r, loc);
     r.z += (0 - r.H) / sv;
-    SZJ::Scoord(r.x, 0, r);
+    SZJ::Scoord(r.x, 0, r, loc);
     r.x += rad2rrad(M_PI - r.H) / sv;
     return r;
 }
 
-void SZJ::calcRTS(double jd, int n, double Jdl, double Wdl, double sq) {    //多天升中降计算,jd是当地起始略日(中午时刻),sq是时区
+void SZJ::calcRTS(double jd, int n, Location loc, double sq) {    //多天升中降计算,jd是当地起始略日(中午时刻),sq是时区
     int i, c;
     SJ_S rr;
     SJ r;
-    if (!SZJ::rts.size()) {
+    if (SZJ::rts.empty()) {
         for (i = 0; i < 31; i++)
             SZJ::rts.push_back({});
     }
-    SZJ::lon = Jdl, SZJ::lat = Wdl, sq /= 24;    //设置站点参数
+    sq /= 24;    //设置站点参数
     for (i = 0; i < n; i++) {
         rr = SZJ::rts[i];
         rr.Ms = rr.Mz = rr.Mj = "--:--:--";
     }
     for (i = -1; i <= n; i++) {
         if (i >= 0 && i < n) {                        //太阳
-            r = SZJ::St(jd + i + sq);
+            r = SZJ::St(jd + i + sq, loc);
             SZJ::rts[i].s = timeStr(r.s - sq);    //升
             SZJ::rts[i].z = timeStr(r.z - sq);    //中
             SZJ::rts[i].j = timeStr(r.j - sq);    //降
@@ -162,7 +162,7 @@ void SZJ::calcRTS(double jd, int n, double Jdl, double Wdl, double sq) {    //�
             SZJ::rts[i].ch = timeStr(r.h - r.c - 0.5);    //光照时间,timeStr()内部+0.5,所以这里补上-0.5
             SZJ::rts[i].sj = timeStr(r.j - r.s - 0.5);    //昼长
         }
-        r = SZJ::Mt(jd + i + sq);    //月亮
+        r = SZJ::Mt(jd + i + sq, loc);    //月亮
         c = int2(r.s - sq + 0.5) - jd;
         if (c >= 0 && c < n)
             SZJ::rts[c].Ms = timeStr(r.s - sq);

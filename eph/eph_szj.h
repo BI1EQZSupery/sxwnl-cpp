@@ -1,5 +1,6 @@
 #include "../mylib/mystl/my_string.h"
 #include "../mylib/mystl/vector.h"
+#include "lat_lon_data.h"
 
 struct SJ {
     double z;
@@ -39,22 +40,22 @@ class SZJ {    //日月的升中天降,不考虑气温和气压的影响
 public:
     static mystl::vector<SJ_S> rts;    //多天的升中降
 
-    static double getH(double h, double w);
+    static double getH(double h, double w, Location loc);
 
-    static void Mcoord(double jd, double H0, SJ &r);
+    static void Mcoord(double jd, double H0, SJ &r, Location loc);
 
-    static void Scoord(double jd, int xm, SJ &r);
+    static void Scoord(double jd, int xm, SJ &r, Location loc);
 
-    static SJ Mt(double jd);
+    static SJ Mt(double jd, Location loc);
 
-    static SJ Qt(double jd);
+//    static SJ Qt(double jd);
 
-    static SJ St(double jd);
+    static SJ St(double jd, Location loc);
 
-    static void calcRTS(double jd, int n, double Jdl, double Wdl, double sq);
+    static void calcRTS(double jd, int n, Location loc, double sq);
 
-    static double lon;    //站点地理经度,向东测量为正
-    static double lat;    //站点地理纬度
+//    static double lon;    //站点地理经度,向东测量为正
+//    static double lat;    //站点地理纬度
 
 private:
     static double E;    //黄赤交角

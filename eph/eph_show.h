@@ -30,9 +30,9 @@ mystl::string rs2_calc(uint8_t fs, double jd0, double step = SYZYGY);
 mystl::string rs2_jxb();
 
 // 升降相关计算
-mystl::string shengjiang(int y, int m, int d, JINGWEI jw);
+mystl::string shengjiang(int y, int m, int d, Location loc);
 
-mystl::string shengjiang2(int y, JINGWEI jw);
+mystl::string shengjiang2(int y, Location loc);
 
 mystl::string shengjiang3(int y);
 

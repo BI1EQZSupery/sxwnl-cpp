@@ -232,18 +232,18 @@ mystl::string rs2_jxb() { //显示界线表
     return RS_GS::jieX3(jd);
 }
 
-mystl::string shengjiang(int y, int m, int d, JINGWEI jw) {
+mystl::string shengjiang(int y, int m, int d, Location loc) {
     Date dt = {y, m, d, 12, 0, 0};
-    SZJ::lon = jw.J / radd;        //设置站点参数
-    SZJ::lat = jw.W / radd;
+//    SZJ::lon = jw.J / radd;        //设置站点参数
+//    SZJ::lat = jw.W / radd;
     double jd = toJD(dt) - J2000;    //取屏幕时间
-    double sq = SZJ::lon / pi2 * 24.0;
+    double sq = loc.longitude_R / pi2 * 24.0;
 
     mystl::string s = "\033[31;1m北京时间(转为格林尼治时间请减8小时)：\033[0m\n";
     SJ r;
     double c = J2000 + 8 / 24.0;
 
-    r = SZJ::St(jd - sq / 24.0);
+    r = SZJ::St(jd - sq / 24.0, loc);
     s += "太阳升起 " + JD2str(r.s + c) + " 太阳降落 " + JD2str(r.j + c) + "\n";
     s += "日上中天 " + JD2str(r.z + c) + " 日下中天 " + JD2str(r.x + c) + "\n";
     s += "民用天亮 " + JD2str(r.c + c) + " 民用天黑 " + JD2str(r.h + c) + "\n";
@@ -252,16 +252,16 @@ mystl::string shengjiang(int y, int m, int d, JINGWEI jw) {
     s += "日照长度  " + timeStr(r.j - r.s - 0.5) + " \n日光长度  " + timeStr(r.h - r.c - 0.5) + "\n";
     if (r.sm.length())
         s += "注：" + r.sm + "\n";
-    r = SZJ::Mt(jd - sq / 24.0);
+    r = SZJ::Mt(jd - sq / 24.0, loc);
     s += "月亮升起 " + JD2str(r.s + c) + " 月亮降落 " + JD2str(r.j + c) + "\n";
     s += "月上中天 " + JD2str(r.z + c) + " 月下中天 " + JD2str(r.x + c) + "\n";
 //	std::cout << s << std::endl;
     return s;
 }
 
-mystl::string shengjiang2(int y, JINGWEI jw) {                                //太阳升降快算
-    double L = jw.J / radd;        //设置站点参数
-    double fa = jw.W / radd;
+mystl::string shengjiang2(int y, Location loc) {                                //太阳升降快算
+    double L = loc.longitude_R; // jw.J / radd;        //设置站点参数
+    double fa = loc.latitude_R; // jw.W / radd;
     Date dt = {y, 1, 1, 12};
     double jd = toJD(dt) - J2000;    //取屏幕时间
     int i;

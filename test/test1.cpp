@@ -368,15 +368,13 @@ int main() {
 #if defined(_WIN32) || defined(_MSC_VER)
     system("@chcp 65001");
 #endif
-
-
-    Date dat = get_time();
+    Date dat = {2024,2,7,22,52,20};
 
     // 农历基础
     init_ob();
 
     OB_LUN lun = yueLiCalc(dat.Y, dat.M);
-    std::cout << DD2str(get_time()) << std::endl;
+    std::cout << DD2str(dat) << std::endl;
     std::cout << lun.nianhao << std::endl; //年号
 
     initmap(lun);
@@ -394,42 +392,42 @@ int main() {
 
         std::cout << std::endl;
     }
-
+    std::cout << nianLiSTR(dat.Y) << std::endl;
     // 星历计算
-    pCalc(1, {2008, 1, 1}, lon_and_lat, 3);
+    pCalc(1, dat, lon_and_lat, 3);
     // 天象
-    tianXiang(15, 2, {2022, 1, 1});
+    tianXiang(15, 2, dat);
 
     // 气朔测试
     dingQi_v();
     dingSuo_v();
 
-    /*
     int y=dat.Y;
     suoCalc(y);
     qiCalc (y);
     houCalc(y); // 定候
-    */
+
     // 粗算气朔误差
-    // dingQi_cmp();
-    // dingSuo_cmp(2000,10);
+     dingQi_cmp();
+     dingSuo_cmp(2000,10);
 
     // 命理八字
     ML_calc(dat, lon_and_lat);
 
     // 升降
     std::cout << "\n========--升降计算--========\n";
-    std::cout << shengjiang(dat.Y, dat.M, dat.D, lon_and_lat) << "\n";
+
+    std::cout << shengjiang(dat.Y, dat.M, dat.D, Location(lon_and_lat.J, lon_and_lat.W)) << "\n";
 
     // 日月食
-    Date d = {2008, 8, 1, 18, 17, 15.0};
+    Date d = dat;
 
     std::cout << rysCalc(d, true, false, lon_and_lat) << "\n";
 
     std::cout << rs_search(2008, 8, 200, 1) << std::endl; // 日食粗搜索
     std::cout << rs2_calc(5, 0, 29.5306) << "\n";
 
-    //  rs2_jxb();     // 日食界线表
+    rs2_jxb();     // 日食界线表
 
 #if defined(_WIN32) || defined(_MSC_VER)
     system("pause");
