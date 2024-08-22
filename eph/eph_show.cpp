@@ -131,7 +131,7 @@ mystl::string rs_search(int Y, int M, int n, bool fs) {
             r = {rr.jd, rr.jdSuo, r.ac, rr.lx};
         }
         if (r.lx != "N") {
-            s += JD2str(r.jd + J2000).substr(0, 11);
+            s += JD2str(r.jd + J2000);
             s += r.lx;
             k++;
             if (k % 5 == 0)

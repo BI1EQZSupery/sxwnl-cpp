@@ -59,7 +59,6 @@ void tianXiang(int xm, int xm2, Date dat, int n = 10) {
                 re = moonNode(jd, 0);//求降
             s += txFormatT(re[0]) + rad2str(rad2mrad(re[1]), 0) + "\n";
         }
-
     }
     if (xm == 5 || xm == 6) { //求地球近远点
         for (i = 0; i < n; i++, jd = re[0] + 365.259636 / 36525.0) {
@@ -368,8 +367,8 @@ int main() {
 #if defined(_WIN32) || defined(_MSC_VER)
     system("@chcp 65001");
 #endif
-    Date dat = {2024,2,7,22,52,20};
-
+    Date dat = {2024,4,8,11,55,55};
+//    dat = {1989, 2,10, 12,30,1};
     // 农历基础
     init_ob();
 
@@ -384,11 +383,11 @@ int main() {
     for (int i = 0; i < 30; i++) {
         std::cout << lun.day[i].y << "年" << lun.day[i].m << "月" << lun.day[i].d << "日: " << lun.day[i].Lday2;
         if (lun.day[i].A.length())
-            std::cout << "A" << lun.day[i].A;
+            std::cout << " AA " << lun.day[i].A;
         if (lun.day[i].B.length())
-            std::cout << "B" << lun.day[i].B;
+            std::cout << " BB " << lun.day[i].B;
         if (lun.day[i].C.length())
-            std::cout << "C" << lun.day[i].C;
+            std::cout << " CC " << lun.day[i].C;
 
         std::cout << std::endl;
     }
@@ -403,11 +402,15 @@ int main() {
     dingSuo_v();
 
     int y=dat.Y;
+    std::cout << "定朔" << std::endl;
     suoCalc(y);
+    std::cout << "定气" << std::endl;
     qiCalc (y);
+    std::cout << "定候" << std::endl;
     houCalc(y); // 定候
 
     // 粗算气朔误差
+
      dingQi_cmp();
      dingSuo_cmp(2000,10);
 
@@ -419,14 +422,17 @@ int main() {
 
     std::cout << shengjiang(dat.Y, dat.M, dat.D, Location(lon_and_lat.J, lon_and_lat.W)) << "\n";
 
+    std::cout << "== 日月食" << std::endl;
     // 日月食
     Date d = dat;
 
+    std::cout << "== rysCalc" << std::endl;
     std::cout << rysCalc(d, true, false, lon_and_lat) << "\n";
-
-    std::cout << rs_search(2008, 8, 200, 1) << std::endl; // 日食粗搜索
-    std::cout << rs2_calc(5, 0, 29.5306) << "\n";
-
+    std::cout << "== rs_search" << std::endl;
+    std::cout << rs_search(2012, 8, 200, 1) << std::endl; // 日食粗搜索
+    std::cout << "== rs2_calc" << std::endl;
+    std::cout << rs2_calc(5, 16, 29.5306) << "\n";
+    std::cout << "== 日食界线表" << std::endl;
     rs2_jxb();     // 日食界线表
 
 #if defined(_WIN32) || defined(_MSC_VER)
